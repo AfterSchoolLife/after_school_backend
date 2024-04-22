@@ -21,7 +21,3 @@ services:
         sync: false
       - key: WEB_CONCURRENCY
         value: 2 # sensible default
-      - key: RAILS_LOG_TO_STDOUT
-        value: "true"
-    - key: RAILS_SERVE_STATIC_FILES
-      value: "true"
