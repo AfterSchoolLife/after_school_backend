@@ -79,11 +79,6 @@ test:
 #
 production:
   <<: *default
-  database: <%= ENV['after_school_life'] %>
-  username: <%= ENV['after_school_life_user'] %>
-  password: <%= ENV['3snXHeuWR6jXGl269VU1NCLnVaMf2Kuy'] %>
-  host: <%= ENV['dpg-coja8facn0vc73drl2q0-a'] %>
-  port: <%= ENV['5432'] %>
-  adapter: postgresql
+  url: <%= ENV["MY_APP_DATABASE_URL"] %>
 
   
