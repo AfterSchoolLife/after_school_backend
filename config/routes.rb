@@ -7,9 +7,17 @@ Rails.application.routes.draw do
       resources :products, only: [:index, :show, :create, :update, :destroy]
       resources :students, only: [:index, :show, :create, :update, :destroy]
       resources :carts, only: [:index, :show, :create, :update, :destroy]
+      resources :candidates, only: [:index,:create, :destroy]
+      resources :purchaseds, only: [:index,:create] do
+        collection do
+          get 'getStudentInfoSchedule/:schedule_id', action: :getStudentInfoSchedule
+          get 'getStudentInfoProduct/:product_id', action: :getStudentInfoProduct
+        end
+      end
       get '/getall', to: 'schedules#getall'
       get '/getSchedules', to: 'schedules#getSchedules'
       get '/getCartSummary', to: 'carts#getCartSummary'
+      post '/checkout', to: 'purchaseds#checkout'
       namespace :auth do
         get '/current_user', to: 'current_user#index'
       end

@@ -13,9 +13,9 @@ class Api::V1::CartsController < ApplicationController
     def create
         begin
             @carts_create = Cart.new(cart_params_post.merge(user_id: current_user.id))
-            set_cart_type_based_on_params if @carts_create.valid?
+            set_cart_type_based_on_params
             if @carts_create.save
-                render json: @carts_create,include: [:product, :schedule], status: :created
+                render json: @carts_create,include: [:product, { schedule: { include: [:program, :school] } }], status: :created
             else
                 error_message = @carts_create.errors.full_messages.to_sentence
                 render json: { error: error_message }, status: :unprocessable_entity
@@ -28,7 +28,7 @@ class Api::V1::CartsController < ApplicationController
     def update
         begin
             if @cart.update(cart_params)
-                render json: @cart
+                render json: @cart, include: [:product, { schedule: { include: [:program, :school] } }]
             else
                 error_message = @cart.errors.full_messages.to_sentence
                 render json: { error: error_message }, status: :unprocessable_entity
@@ -71,7 +71,7 @@ class Api::V1::CartsController < ApplicationController
     end
 
     def cart_params_post
-       params.permit(:schedule_id, :product_id, :quantity, :user_id)
+       params.permit(:schedule_id, :product_id)
     end
     def set_cart_type_based_on_params
         if params[:product_id].present?

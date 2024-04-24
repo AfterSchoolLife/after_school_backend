@@ -10,16 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "candidates", force: :cascade do |t|
+    t.string "firstname"
+    t.string "lastname"
+    t.string "email"
+    t.string "phonenumber"
+    t.text "about"
+    t.text "skills"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "carts", force: :cascade do |t|
     t.uuid "user_id", null: false
     t.bigint "schedule_id"
     t.bigint "product_id"
-    t.integer "quantity"
     t.string "cart_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -36,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
     t.datetime "updated_at", null: false
     t.boolean "is_active", default: true
     t.text "image_url"
+    t.uuid "created_by"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -45,6 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
     t.datetime "updated_at", null: false
     t.boolean "is_active", default: true
     t.text "image_url"
+    t.uuid "created_by"
   end
 
   create_table "purchaseds", force: :cascade do |t|
@@ -52,10 +64,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
     t.bigint "student_id", null: false
     t.bigint "schedule_id"
     t.bigint "product_id"
-    t.string "type"
+    t.string "cart_type"
     t.uuid "purchase_uuid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
     t.index ["product_id"], name: "index_purchaseds_on_product_id"
     t.index ["schedule_id"], name: "index_purchaseds_on_schedule_id"
     t.index ["student_id"], name: "index_purchaseds_on_student_id"
@@ -75,6 +88,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
     t.bigint "program_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "teacher_name"
+    t.decimal "cost_of_teacher"
+    t.decimal "facility_rental"
+    t.integer "total_available"
+    t.integer "currently_available"
+    t.uuid "created_by"
     t.index ["program_id"], name: "index_schedules_on_program_id"
     t.index ["school_id"], name: "index_schedules_on_school_id"
   end
@@ -85,6 +104,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_051945) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_active", default: true
+    t.uuid "created_by"
   end
 
   create_table "students", force: :cascade do |t|

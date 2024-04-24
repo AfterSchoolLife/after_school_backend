@@ -1,5 +1,5 @@
 class ScheduleSerializer < ActiveModel::Serializer
-  attributes :id, :days, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id
+  attributes :id, :days, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id, :teacher_name, :cost_of_teacher, :facility_rental, :total_available, :currently_available
 
 
   def school_name
