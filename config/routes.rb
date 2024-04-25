@@ -1,10 +1,27 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :programs, only: [:index, :show, :create, :update, :destroy]
-      resources :schools, only: [:index, :show, :create, :update, :destroy]
-      resources :schedules, only: [:index, :show, :create, :update, :destroy]
-      resources :products, only: [:index, :show, :create, :update, :destroy]
+      resources :programs, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          get '/adminIndex', action: :adminIndex
+        end
+      end
+      resources :schools, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          get '/adminIndex', action: :adminIndex
+        end
+      end
+      resources :schedules, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          get '/getAdminAll', action: :getAdminAll
+          get '/adminIndex', action: :adminIndex
+        end
+      end
+      resources :products, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          get '/adminIndex', action: :adminIndex
+        end
+      end
       resources :students, only: [:index, :show, :create, :update, :destroy]
       resources :carts, only: [:index, :show, :create, :update, :destroy] do
         collection do

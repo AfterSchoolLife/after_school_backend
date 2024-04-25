@@ -34,8 +34,6 @@ class Api::V1::Auth::SessionsController < Devise::SessionsController
     begin
       super do |user|
         if user.persisted?
-          puts user.email
-          # token = JWT.encode({ user_id: user.id }, Rails.application.credentials.secret_key_base)
           render json: user
         else
           render json: { error: 'Invalid email or password' }, status: :unauthorized
@@ -43,7 +41,7 @@ class Api::V1::Auth::SessionsController < Devise::SessionsController
         return
       end
     rescue StandardError => e
-      render json: {error: "Failed to Create School" , messge: e.message}, status: :unprocessable_entity
+      render json: {error: "Failed to Create Session" , messge: e.message}, status: :unprocessable_entity
     end
   end
 
