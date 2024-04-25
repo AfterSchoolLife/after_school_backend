@@ -1,16 +1,32 @@
 class Api::V1::ProgramsController < ApplicationController
+    before_action :authenticate_user!, only: [:adminIndex, :create]
     before_action :set_program, only: [:show,:destroy,:update]
     def index
         begin
-            programs = Program.where(is_active: params[:isActive])
+            programs = Program.where(is_active: true)
             render json: programs, only: [:id, :title, :image_url, :description, :is_active]
+        rescue StandardError => e
+            render json: {error: "Failed to Fetch Programs" , messge: e.message}, status: :unprocessable_entity
+        end 
+    end
+    def adminIndex
+        begin
+            if current_user.role == 'super-admin'
+                programs = Program.where(is_active: params[:isActive])
+                render json: programs
+            elsif current_user.role == 'admin'
+                programs = Program.where(created_by: current_user.id, is_active: params[:isActive])
+                render json: programs
+            else
+                render json: { error: 'You do not have access' }, status: :unprocessable_entity
+            end
         rescue StandardError => e
             render json: {error: "Failed to Fetch Programs" , messge: e.message}, status: :unprocessable_entity
         end 
     end
     def create
         begin
-            program = Program.new(program_params)
+            program = Program.new(program_params.merge(created_by: current_user.id))
             if program.save
                 render json: program, status: :created
             else

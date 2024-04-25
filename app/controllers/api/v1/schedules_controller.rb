@@ -1,5 +1,5 @@
 class Api::V1::SchedulesController < ApplicationController
-  before_action :authenticate_user!, only: [:create]
+  before_action :authenticate_user!, only: [:create, :getAdminAll, :adminIndex]
   before_action :set_schedule, only: [:show,:destroy,:update]
   def index
     begin
@@ -7,6 +7,22 @@ class Api::V1::SchedulesController < ApplicationController
         render json: scheudle, each_serializer: ScheduleSerializer
     rescue StandardError => e
         render json: {error: "Failed to Fetch Schedule" , messge: e.message}, status: :unprocessable_entity
+    end 
+  end
+
+  def adminIndex
+    begin
+        if current_user.role == 'super-admin'
+          scheudle = Schedule.where(is_active: params[:isActive])
+            render json: scheudle
+        elsif current_user.role == 'admin'
+          scheudle = Schedule.where(created_by: current_user.id, is_active: params[:isActive])
+            render json: scheudle
+        else
+            render json: { error: 'You do not have access' }, status: :unprocessable_entity
+        end
+    rescue StandardError => e
+        render json: {error: "Failed to Fetch Schedules" , messge: e.message}, status: :unprocessable_entity
     end 
   end
 
@@ -49,11 +65,19 @@ class Api::V1::SchedulesController < ApplicationController
     end
   end
 
-  def getall
+  def getAdminAll
     begin
-      school = School.where(is_active: true)
-      programs = Program.where(is_active: true)
-      render json: { schools: school, programs: programs }
+      if current_user.role == 'super-admin'
+        school = School.where(is_active: true)
+        programs = Program.where(is_active: true)
+        render json: { schools: school, programs: programs }
+      elsif current_user.role == 'admin'
+        school = School.where(is_active: true, created_by: current_user.id)
+        programs = Program.where(is_active: true, created_by: current_user.id)
+        render json: { schools: school, programs: programs }
+      else
+        render json: { error: 'You do not have access' }, status: :unprocessable_entity
+      end
     rescue StandardError => e
         render json: {error: "Failed to Get Schools and programs" , messge: e.message}, status: :unprocessable_entity
     end

@@ -1,10 +1,26 @@
 class Api::V1::SchoolsController < ApplicationController
+    before_action :authenticate_user!, only: [:adminIndex, :create]
     before_action :set_school, only: [:show,:destroy,:update]
   
     def index
         begin
-            school = School.where(is_active: params[:isActive])
+            school = School.where(is_active: params[:true])
             render json: school, only: [:id, :name, :address, :is_active]
+        rescue StandardError => e
+            render json: {error: "Failed to Fetch Schools" , messge: e.message}, status: :unprocessable_entity
+        end 
+    end
+    def adminIndex
+        begin
+            if current_user.role == 'super-admin'
+                schools = School.where(is_active: params[:isActive])
+                render json: schools
+            elsif current_user.role == 'admin'
+                schools = School.where(created_by: current_user.id, is_active: params[:isActive])
+                render json: schools
+            else
+                render json: { error: 'You do not have access' }, status: :unprocessable_entity
+            end
         rescue StandardError => e
             render json: {error: "Failed to Fetch Schools" , messge: e.message}, status: :unprocessable_entity
         end 
