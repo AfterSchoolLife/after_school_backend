@@ -48,6 +48,10 @@ Rails.application.routes.draw do
   get '/checkout-session-status', to: 'checkouts#session_status', as: :checkout_session_status
 
 
+  post 'stripe_webhooks', to: 'stripe_webhooks#create'
+
+
+
   # Defines the root path route ("/")
   # root "posts#index"
 end

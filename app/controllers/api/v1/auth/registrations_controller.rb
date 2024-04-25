@@ -70,6 +70,7 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
       build_resource(user_params.merge(role: 'user'))
       resource.save
       if resource.persisted?
+        UsermailerMailer.welcome_email(resource).deliver_later
         render json: {
         status: {code: 200, message: "Signed up sucessfully."},
         data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
