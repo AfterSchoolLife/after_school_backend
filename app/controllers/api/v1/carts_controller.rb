@@ -51,6 +51,15 @@ class Api::V1::CartsController < ApplicationController
         end
     end
 
+    def clearCart
+        begin
+            Cart.where(user_id: current_user.id).delete_all
+            head :no_content
+        rescue StandardError => e
+            render json: {error: "Failed to Clear Cart" , messge: e.message}, status: :unprocessable_entity
+        end
+    end
+
     def getCartSummary
         begin
             product = Cart.includes(:product).where(cart_type: 'cart_product',user_id: current_user.id).sum(:price)
@@ -71,7 +80,7 @@ class Api::V1::CartsController < ApplicationController
     end
 
     def cart_params_post
-       params.permit(:schedule_id, :product_id)
+       params.permit(:schedule_id, :product_id, :student_id)
     end
     def set_cart_type_based_on_params
         if params[:product_id].present?

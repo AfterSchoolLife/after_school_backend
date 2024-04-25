@@ -6,7 +6,11 @@ Rails.application.routes.draw do
       resources :schedules, only: [:index, :show, :create, :update, :destroy]
       resources :products, only: [:index, :show, :create, :update, :destroy]
       resources :students, only: [:index, :show, :create, :update, :destroy]
-      resources :carts, only: [:index, :show, :create, :update, :destroy]
+      resources :carts, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          delete '/clearCart', action: :clearCart
+        end
+      end
       resources :candidates, only: [:index,:create, :destroy]
       resources :purchaseds, only: [:index,:create] do
         collection do

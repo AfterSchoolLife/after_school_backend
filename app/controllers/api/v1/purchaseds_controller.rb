@@ -1,5 +1,3 @@
-require 'securerandom'
-
 class Api::V1::PurchasedsController < ApplicationController
   before_action :authenticate_user!
 
@@ -12,14 +10,12 @@ class Api::V1::PurchasedsController < ApplicationController
     end 
   end
   def create
-    gen_uuid = SecureRandom.uuid
     ActiveRecord::Base.transaction do
       purchase_items = params[:purchase_items]
       errors = []
       purchase_items.each do |item|
-        permitted_params = item.permit(:schedule_id, :student_id, :purchase_uuid, :gen_uuid, :product_id, :cart_type)
+        permitted_params = item.permit(:schedule_id, :student_id, :purchase_uuid, :product_id, :cart_type, :status)
         permitted_params[:user_id] = current_user.id
-        permitted_params[:purchase_uuid] = gen_uuid
         if permitted_params[:schedule_id].present?
           permitted_params[:cart_type] = 'cart_schedule'
           schedule = Schedule.find_by(id: permitted_params[:schedule_id])
@@ -34,8 +30,6 @@ class Api::V1::PurchasedsController < ApplicationController
           end
 
           schedule.update(currently_available: schedule.currently_available - 1) # Update schedule availability
-          puts 'hi'
-          puts permitted_params
           purchase = Purchased.new(permitted_params)
           unless purchase.valid?
             errors << purchase.errors.full_messages.join(", ")
@@ -43,14 +37,15 @@ class Api::V1::PurchasedsController < ApplicationController
           end
 
           begin
-            purchase.save!
+            purchase.save
           rescue StandardError => e
+            puts 'error up up'
             errors << "Error creating purchase: #{e.message}"
             raise ActiveRecord::Rollback # Roll back the transaction due to errors
           end
-        else
-          permitted_params[:cart_type] = 'cart_schedule'
-          purchase = Purchase.new(item)
+        elsif permitted_params[:product_id].present?
+          permitted_params[:cart_type] = 'cart_product'
+          purchase = Purchased.new(permitted_params)
 
           unless purchase.valid?
             errors << purchase.errors.full_messages.join(", ")
@@ -58,15 +53,16 @@ class Api::V1::PurchasedsController < ApplicationController
           end
 
           begin
-            purchase.save!
+            purchase.save
           rescue StandardError => e
+            puts 'error down down'
             errors << "Error creating purchase: #{e.message}"
             raise ActiveRecord::Rollback # Roll back the transaction due to errors
           end
         end
       end
-
       if errors.empty?
+        Cart.where(user_id: current_user.id).delete_all
         head :no_content
       else
         render json: { errors: errors }, status: :unprocessable_entity
@@ -80,9 +76,8 @@ class Api::V1::PurchasedsController < ApplicationController
     purchase_items = params[:purchase_items]
     errors = []
     purchase_items.each do |item|
-      permitted_params = item.permit(:schedule_id, :student_id, :purchase_uuid, :gen_uuid, :product_id, :cart_type)
+      permitted_params = item.permit(:schedule_id, :student_id, :purchase_uuid, :product_id, :cart_type, :status)
       permitted_params[:user_id] = current_user.id
-      permitted_params[:purchase_uuid] = gen_uuid
       if permitted_params[:schedule_id].present?
         permitted_params[:cart_type] = 'cart_schedule'
         schedule = Schedule.find_by(id: permitted_params[:schedule_id])
@@ -102,8 +97,8 @@ class Api::V1::PurchasedsController < ApplicationController
           next
         end
       else
-        permitted_params[:cart_type] = 'cart_schedule'
-        purchase = Purchase.new(item)
+        permitted_params[:cart_type] = 'cart_product'
+        purchase = Purchased.new(permitted_params)
 
         unless purchase.valid?
           errors << purchase.errors.full_messages.join(", ")

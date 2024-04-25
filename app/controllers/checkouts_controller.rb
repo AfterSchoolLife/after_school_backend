@@ -13,7 +13,7 @@ class CheckoutsController < ApplicationController
         metadata: {
           user_id: current_user.id
         },
-        return_url: 'http://localhost:3000'+ '/return?session_id={CHECKOUT_SESSION_ID}',
+        return_url: 'http://localhost:3000/shop'+ '/return?session_id={CHECKOUT_SESSION_ID}',
       )
   
       render json: { clientSecret: session.client_secret, sessionId: session.id }
@@ -38,17 +38,29 @@ class CheckoutsController < ApplicationController
   
     def generate_line_items(cart)
       @cart.map do |item|
-        puts 
+        if item.cart_type == 'cart_schedule'
         {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: item.schedule.program.title,  # Ensure the model relationships support this
+              name: item.schedule.program.title + ' | ' + item.schedule.school.name + ', ' + item.schedule.school.address,  # Ensure the model relationships support this
             },
             unit_amount: (item.schedule.price * 100).to_i,
           },
           quantity: 1,
         }
+        elsif item.cart_type == 'cart_product'
+          {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.product.title,  # Ensure the model relationships support this
+            },
+            unit_amount: (item.product.price * 100).to_i,
+          },
+          quantity: 1,
+          }
+        end
       end
     end
 

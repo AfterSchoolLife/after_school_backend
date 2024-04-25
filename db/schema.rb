@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_25_154737) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -33,8 +33,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
     t.string "cart_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "student_id", null: false
     t.index ["product_id"], name: "index_carts_on_product_id"
     t.index ["schedule_id"], name: "index_carts_on_schedule_id"
+    t.index ["student_id"], name: "index_carts_on_student_id"
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
@@ -65,7 +67,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
     t.bigint "schedule_id"
     t.bigint "product_id"
     t.string "cart_type"
-    t.uuid "purchase_uuid"
+    t.string "purchase_uuid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
@@ -144,6 +146,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
     t.string "emergency_1_phone_number"
     t.string "emergency_2_phone_number"
     t.string "role"
+    t.string "country"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -151,6 +154,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_212814) do
 
   add_foreign_key "carts", "products"
   add_foreign_key "carts", "schedules"
+  add_foreign_key "carts", "students"
   add_foreign_key "carts", "users"
   add_foreign_key "purchaseds", "products"
   add_foreign_key "purchaseds", "schedules"
