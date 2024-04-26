@@ -5,14 +5,21 @@ class UsermailerMailer < ApplicationMailer
   def welcome_email(user)
     @user = user
     subject = 'Welcome to AfterSchoolLife!'
-    content = "Hello #{@user}, welcome to AfterSchoolLife. You have successfully registered. Please login and look into our program offerings!"
+    content = "Hello #{@user.parent_1_name}, welcome to AfterSchoolLife. You have successfully registered. Please login and look into our program offerings!"
     send_email(@user.email, subject, content)
   end
 
   def payment_successful_email(user)
     @user = user
     subject = 'Payment Confirmation for AfterSchoolLife'
-    content = "Dear #{@user}, your payment has been successfully processed. Thank you for your purchase."
+    content = "Dear #{@user.parent_1_name}, your payment has been successfully processed. Thank you for your purchase."
+    send_email(@user.email, subject, content)
+  end
+
+  def payment_faliure_email(user)
+    @user = user
+    subject = 'Payment Faliure for AfterSchoolLife'
+    content = "Dear #{@user.parent_1_name}, your payment has failed."
     send_email(@user.email, subject, content)
   end
 
@@ -20,7 +27,7 @@ class UsermailerMailer < ApplicationMailer
     @user = user
     @program = program
     subject = 'Confirmation of Registration for Program'
-    content = "Hello #{@user}, you have successfully registered for #{@program}. Details about the program will follow shortly."
+    content = "Hello #{@user.parent_1_name}, you have successfully registered for #{@program}. Details about the program will follow shortly."
     send_email(@user.email, subject, content)
   end
 

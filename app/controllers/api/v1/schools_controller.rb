@@ -4,7 +4,7 @@ class Api::V1::SchoolsController < ApplicationController
   
     def index
         begin
-            school = School.where(is_active: params[:true])
+            school = School.where(is_active: true)
             render json: school, only: [:id, :name, :address, :is_active]
         rescue StandardError => e
             render json: {error: "Failed to Fetch Schools" , messge: e.message}, status: :unprocessable_entity

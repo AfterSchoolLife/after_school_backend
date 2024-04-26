@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_25_200129) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_26_063140) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -154,6 +154,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_200129) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "waitlists", force: :cascade do |t|
+    t.bigint "schedule_id", null: false
+    t.bigint "student_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schedule_id"], name: "index_waitlists_on_schedule_id"
+    t.index ["student_id"], name: "index_waitlists_on_student_id"
+    t.index ["user_id"], name: "index_waitlists_on_user_id"
+  end
+
   add_foreign_key "carts", "products"
   add_foreign_key "carts", "schedules"
   add_foreign_key "carts", "students"
@@ -165,4 +176,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_200129) do
   add_foreign_key "schedules", "programs"
   add_foreign_key "schedules", "schools"
   add_foreign_key "students", "users"
+  add_foreign_key "waitlists", "schedules"
+  add_foreign_key "waitlists", "students"
+  add_foreign_key "waitlists", "users"
 end

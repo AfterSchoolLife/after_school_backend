@@ -53,7 +53,11 @@ Rails.application.routes.draw do
     sessions: 'api/v1/auth/sessions',
     registrations: 'api/v1/auth/registrations'
   }
-  
+  devise_scope :user do
+    post "api/v1/auth/createAdmin", to: "api/v1/auth/registrations#createAdmin"
+  end
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

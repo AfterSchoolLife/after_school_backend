@@ -64,6 +64,7 @@
 
 class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
   include RackSessionFix
+  before_action :authenticate_user!, only: [:createAdmin]
   before_action :user_params, only: [:create]
   def create
     begin
@@ -85,6 +86,30 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def createAdmin
+    begin
+        if current_user.role == 'super-admin'
+          build_resource(user_params.merge(role: 'admin',parent_1_name: 'NA', parent_1_relation: 'NA', parent_1_phone_number: 'NA', emergency_1_name: 'NA', emergency_1_relation: 'NA', emergency_1_phone_number: 'NA'))
+          resource.save
+          if resource.persisted?
+              UsermailerMailer.welcome_email(resource).deliver_later
+              render json: {
+              status: {code: 200, message: "Signed up sucessfully."},
+              data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
+              }, status: :ok
+          else
+              render json: {
+              status: {code: 422, message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}"}
+              }, status: :unprocessable_entity
+          end
+        else
+          render json: { error: 'You do not have access' }, status: :unprocessable_entity
+        end
+    rescue StandardError => e
+        render json: {error: "Failed to Create user" , messge: e.message}, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     super do |resource|
       render json: {
@@ -94,7 +119,7 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
   end
   private
   def user_params
-    params.require(:user).permit(:email, :password, :parent_1_name, :parent_2_name, :parent_1_phone_number, :parent_2_phone_number, :emergency_1_name, :emergency_2_name, :emergency_1_relation, :emergency_2_relation, :emergency_1_phone_number, :emergency_2_phone_number)
+    params.require(:user).permit(:email, :password, :parent_1_name, :parent_2_name, :parent_1_phone_number, :parent_2_phone_number, :parent_1_relation, :parent_2_relation, :emergency_1_name, :emergency_2_name, :emergency_1_relation, :emergency_2_relation, :emergency_1_phone_number, :emergency_2_phone_number)
   end
 
 end

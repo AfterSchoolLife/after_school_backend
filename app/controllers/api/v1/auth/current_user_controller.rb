@@ -1,6 +1,8 @@
 class Api::V1::Auth::CurrentUserController < ApplicationController
   before_action :authenticate_user!
   def index
+    puts ENV['SENDGRID_API_KEY']
+    puts 'hello'
     carts = Cart.includes(:product, :schedule).where(user_id: current_user.id)
     students = Student.where(is_active: true, user_id: current_user.id)
     render json: { 
