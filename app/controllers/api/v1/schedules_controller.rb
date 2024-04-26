@@ -11,7 +11,7 @@ class Api::V1::SchedulesController < ApplicationController
     end
   end
 
-  def indexPrivate
+  def indexprivate
     begin
       schedule = Schedule.where(school_id: params[:schoolId],country: current_user.country)
       render json: schedule
@@ -23,10 +23,10 @@ class Api::V1::SchedulesController < ApplicationController
   def adminIndex
     begin
         if current_user.role == 'super-admin'
-          scheudle = Schedule.where(is_active: params[:isActive])
+          scheudle = Schedule.where(is_active: params[:isActive],country: current_user.country)
             render json: scheudle
         elsif current_user.role == 'admin'
-          scheudle = Schedule.where(created_by: current_user.id, is_active: params[:isActive])
+          scheudle = Schedule.where(created_by: current_user.id, is_active: params[:isActive],country: current_user.country)
             render json: scheudle
         else
             render json: { error: 'You do not have access' }, status: :unprocessable_entity

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         end
       end
       resources :students, only: [:index, :show, :create, :update, :destroy]
+      resources :waitlists, only: [:index, :create]
       resources :carts, only: [:index, :show, :create, :update, :destroy] do
         collection do
           delete '/clearCart', action: :clearCart
