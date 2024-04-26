@@ -35,7 +35,7 @@ class Api::V1::SchoolsController < ApplicationController
     end
     def create
         begin
-            school = School.new(school_params.merge(country: current_user.country))
+            school = School.new(school_params.merge(country: current_user.country,created_by: current_user.id,))
             if school.save
                 render json: school, status: :created
             else
