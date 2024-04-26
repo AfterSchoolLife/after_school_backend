@@ -4,7 +4,7 @@ class Api::V1::PurchasedsController < ApplicationController
   def index
     begin
       purchased = Purchased.where(user_id: current_user.id)
-      render json: purchased, include: [:student]
+      render json: purchased, include: [:student, :product, { schedule: { include: [:program, :school] } }]
     rescue StandardError => e
       render json: {error: "Failed to Fetch order history" , messge: e.message}, status: :unprocessable_entity
     end 

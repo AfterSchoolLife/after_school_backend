@@ -42,7 +42,6 @@ class CheckoutsController < ApplicationController
       cart = Cart.where(user_id: session.metadata.user_id)
       user = User.find_by(id: session.metadata.user_id)
       cart.each do |item|
-        puts "#{item.schedule.program.title} | #{item.schedule.school.name}, #{item.schedule.school.address}"
         if item.cart_type == 'cart_schedule'
           UsermailerMailer.program_registration_email(user, "#{item.schedule.program.title} | #{item.schedule.school.name}, #{item.schedule.school.address}").deliver_later
         end
