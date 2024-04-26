@@ -93,11 +93,6 @@ class Api::V1::SchedulesController < ApplicationController
     end
   end
 
-  def sendNotification
-    begin
-      
-  end
-
   private
   def set_schedule
       begin
