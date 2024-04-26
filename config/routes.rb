@@ -17,6 +17,7 @@ Rails.application.routes.draw do
           get '/getAdminAll', action: :getAdminAll
           get '/adminIndex', action: :adminIndex
           get '/indexprivate', action: :indexprivate
+          post '/sendEmail', action: :sendEmail
         end
       end
       resources :products, only: [:index, :show, :create, :update, :destroy] do

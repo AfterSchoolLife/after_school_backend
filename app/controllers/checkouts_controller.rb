@@ -28,7 +28,7 @@ class CheckoutsController < ApplicationController
           handle_payment_success(session,params[:session_id])
           render json: { status: session.status, customer_email: session.customer_details.email }
         else
-          UsermailerMailer.(session,params[:session_id])
+          UsermailerMailer.payment_faliure_email(session,params[:session_id])
           render json: { status: 'failure', message: 'Payment not successful.' }
         end
       rescue Stripe::StripeError => e
@@ -69,7 +69,7 @@ class CheckoutsController < ApplicationController
         }
         if current_user.country == 'usa'
             line_item[:price_data][:currency] = 'usd'
-        elsif
+        elsif current_user.country == 'canada'
             line_item[:price_data][:currency] = 'cad'
         end
         if item.cart_type == 'cart_schedule'

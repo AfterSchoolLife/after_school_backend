@@ -31,6 +31,12 @@ class UsermailerMailer < ApplicationMailer
     send_email(@user.email, subject, content)
   end
 
+  def send_email_multiple(data_user,data_content)
+    @user = data_user
+    subject = 'Notification from After School'
+    send_email(@user.email, subject, data_content)
+  end
+
   private
 
   def send_email(to, subject, content)

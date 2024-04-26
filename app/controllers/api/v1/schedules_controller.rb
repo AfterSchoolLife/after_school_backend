@@ -1,5 +1,5 @@
 class Api::V1::SchedulesController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :getAdminAll, :adminIndex]
+  before_action :authenticate_user!, only: [:create, :getAdminAll, :adminIndex, :sendEmail]
   before_action :set_schedule, only: [:show,:destroy,:update]
   
   def index
@@ -93,7 +93,29 @@ class Api::V1::SchedulesController < ApplicationController
     end
   end
 
+  def sendEmail
+    begin
+      # Securely log or handle parameters if necessary
+      raise StandardError.new("Email list cannot be empty") if email_params[:emailids].blank?
+   
+      users = User.where(email: email_params[:emailids])
+      content = email_params[:body]
+      users.each do |user|
+        puts user.email
+        UsermailerMailer.send_email_multiple(user, content).deliver_later
+      end
+   
+      render json: { msg: 'Notification Sent Successfully' }
+    rescue StandardError => e
+      render json: { error: "Failed to send Email Notification", message: e.message }, status: :unprocessable_entity
+    end
+  end
+
   private
+  def email_params
+    params.require(:email).permit(:body, emailids: [])
+  end
+  
   def set_schedule
       begin
           @schedule = Schedule.find(params[:id])
