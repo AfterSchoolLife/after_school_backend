@@ -1,25 +1,43 @@
 class UsermailerMailer < ApplicationMailer
+  require 'sendgrid-ruby'
+  include SendGrid
 
-    # app/mailers/user_mailer.rb
-    require 'sendgrid-ruby'
-    include SendGrid
-  
-    def welcome_email(user)
-      @user = user
-      mail = SendGrid::Mail.new
-      mail.from = Email.new(email: 'gowthamreddy1289@gmail.com')
-      mail.subject = 'Welcome to AfterSchoolLife!'
-      personalization = Personalization.new
-      personalization.add_to(Email.new(email: @user.email))
-      mail.add_personalization(personalization)
-      mail.add_content(Content.new(type: 'text/plain', value: "Hello #{@user.name}, welcome to AfterSchoolLife. You have successfully registered. Please login and look into our program offerings!"))
-      
-      sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
-      response = sg.client.mail._('send').post(request_body: mail.to_json)
-      puts response.status_code
-      puts response.body
-    end
-
+  def welcome_email(user)
+    @user = user
+    subject = 'Welcome to AfterSchoolLife!'
+    content = "Hello #{@user}, welcome to AfterSchoolLife. You have successfully registered. Please login and look into our program offerings!"
+    send_email(@user.email, subject, content)
   end
-  
+
+  def payment_successful_email(user)
+    @user = user
+    subject = 'Payment Confirmation for AfterSchoolLife'
+    content = "Dear #{@user}, your payment has been successfully processed. Thank you for your purchase."
+    send_email(@user.email, subject, content)
+  end
+
+  def program_registration_email(user, program)
+    @user = user
+    @program = program
+    subject = 'Confirmation of Registration for Program'
+    content = "Hello #{@user}, you have successfully registered for #{@program}. Details about the program will follow shortly."
+    send_email(@user.email, subject, content)
+  end
+
+  private
+
+  def send_email(to, subject, content)
+    mail = SendGrid::Mail.new
+    mail.from = Email.new(email: 'gowthamreddy1289@gmail.com')
+    personalization = Personalization.new
+    personalization.add_to(Email.new(email: to))
+    mail.add_personalization(personalization)
+    mail.subject = subject
+    mail.add_content(Content.new(type: 'text/plain', value: content))
+    
+    sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+    response = sg.client.mail._('send').post(request_body: mail.to_json)
+    puts response.status_code
+    puts response.body
+  end
 end
