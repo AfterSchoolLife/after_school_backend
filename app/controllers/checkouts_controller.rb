@@ -4,7 +4,6 @@ class CheckoutsController < ApplicationController
     def create  # Retrieves the cart using the helper method from ApplicationController
       # Create Stripe Checkout session
       begin
-        puts 'Hello world'
         session = Stripe::Checkout::Session.create(
           payment_method_types: ['card'],
           line_items: generate_line_items(),
@@ -62,14 +61,18 @@ class CheckoutsController < ApplicationController
       lineitem = @cart.map do |item|
         line_item = {
           price_data: {
-            currency: 'cad',
+            currency: 'usd',
             product_data: {},
             unit_amount: 0,
           },
           metadata: {},
           quantity: 1,
         }
-    
+        if current_user.country == 'usa'
+            line_item[:price_data][:currency] = 'usd'
+        elsif
+            line_item[:price_data][:currency] = 'cad'
+        end
         if item.cart_type == 'cart_schedule'
           line_item[:price_data][:product_data] = {
             name: "#{item.schedule.program.title} | #{item.schedule.school.name}, #{item.schedule.school.address}",

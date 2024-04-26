@@ -1,13 +1,23 @@
 class Api::V1::SchedulesController < ApplicationController
   before_action :authenticate_user!, only: [:create, :getAdminAll, :adminIndex]
   before_action :set_schedule, only: [:show,:destroy,:update]
+  
   def index
     begin
-        scheudle = Schedule.where(is_active: params[:isActive])
-        render json: scheudle, each_serializer: ScheduleSerializer
+      schedule = Schedule.where(school_id: params[:schoolId])
+      render json: schedule
     rescue StandardError => e
-        render json: {error: "Failed to Fetch Schedule" , messge: e.message}, status: :unprocessable_entity
-    end 
+      render json: {error: "Failed to Get schedule for school" , messge: e.message}, status: :unprocessable_entity
+    end
+  end
+
+  def indexPrivate
+    begin
+      schedule = Schedule.where(school_id: params[:schoolId],country: current_user.country)
+      render json: schedule
+    rescue StandardError => e
+      render json: {error: "Failed to Get schedule for school" , messge: e.message}, status: :unprocessable_entity
+    end
   end
 
   def adminIndex
@@ -32,7 +42,7 @@ class Api::V1::SchedulesController < ApplicationController
 
   def create
     begin
-      schedule = Schedule.new(schedule_params.merge(currently_available: params[:total_available],created_by: current_user.id))
+      schedule = Schedule.new(schedule_params.merge(currently_available: params[:total_available],created_by: current_user.id,country: current_user.country))
       if schedule.save
         render json: schedule, status: :created
       else
@@ -68,11 +78,11 @@ class Api::V1::SchedulesController < ApplicationController
   def getAdminAll
     begin
       if current_user.role == 'super-admin'
-        school = School.where(is_active: true)
+        school = School.where(is_active: true, country: current_user.country)
         programs = Program.where(is_active: true)
         render json: { schools: school, programs: programs }
       elsif current_user.role == 'admin'
-        school = School.where(is_active: true, created_by: current_user.id)
+        school = School.where(is_active: true, created_by: current_user.id, country: current_user.country)
         programs = Program.where(is_active: true, created_by: current_user.id)
         render json: { schools: school, programs: programs }
       else
@@ -83,15 +93,6 @@ class Api::V1::SchedulesController < ApplicationController
     end
   end
 
-  def getSchedules
-    begin
-      schedule = Schedule.where(school_id: params[:schoolId])
-      render json: schedule
-    rescue StandardError => e
-      render json: {error: "Failed to Get schedule for school" , messge: e.message}, status: :unprocessable_entity
-    end
-  end
-  
   private
   def set_schedule
       begin

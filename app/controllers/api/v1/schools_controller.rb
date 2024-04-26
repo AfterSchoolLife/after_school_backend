@@ -1,5 +1,5 @@
 class Api::V1::SchoolsController < ApplicationController
-    before_action :authenticate_user!, only: [:adminIndex, :create]
+    before_action :authenticate_user!, only: [:adminIndex, :create, :indexprivate]
     before_action :set_school, only: [:show,:destroy,:update]
   
     def index
@@ -10,13 +10,21 @@ class Api::V1::SchoolsController < ApplicationController
             render json: {error: "Failed to Fetch Schools" , messge: e.message}, status: :unprocessable_entity
         end 
     end
+    def indexprivate
+        begin
+            school = School.where(is_active: true,country: current_user.country)
+            render json: school, only: [:id, :name, :address, :is_active]
+        rescue StandardError => e
+            render json: {error: "Failed to Fetch Schools" , messge: e.message}, status: :unprocessable_entity
+        end 
+    end
     def adminIndex
         begin
             if current_user.role == 'super-admin'
-                schools = School.where(is_active: params[:isActive])
+                schools = School.where(is_active: params[:isActive], country: current_user.country)
                 render json: schools
             elsif current_user.role == 'admin'
-                schools = School.where(created_by: current_user.id, is_active: params[:isActive])
+                schools = School.where(created_by: current_user.id, is_active: params[:isActive], country: current_user.country)
                 render json: schools
             else
                 render json: { error: 'You do not have access' }, status: :unprocessable_entity
@@ -27,7 +35,7 @@ class Api::V1::SchoolsController < ApplicationController
     end
     def create
         begin
-            school = School.new(school_params)
+            school = School.new(school_params.merge(country: current_user.country))
             if school.save
                 render json: school, status: :created
             else

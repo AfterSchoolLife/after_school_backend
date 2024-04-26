@@ -12,4 +12,7 @@ class User < ApplicationRecord
   validates :emergency_1_name, presence: true
   validates :emergency_1_relation, presence: true
   validates :emergency_1_phone_number, presence: true
+  validates :emergency_1_phone_number, presence: true
+  validates :country, presence: true
+  validates :country, inclusion: { in: %w(usa canada),message: "%{value} is not a valid country" }
 end

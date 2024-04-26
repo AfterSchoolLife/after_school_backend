@@ -9,12 +9,14 @@ Rails.application.routes.draw do
       resources :schools, only: [:index, :show, :create, :update, :destroy] do
         collection do
           get '/adminIndex', action: :adminIndex
+          get '/indexprivate', action: :indexprivate
         end
       end
       resources :schedules, only: [:index, :show, :create, :update, :destroy] do
         collection do
           get '/getAdminAll', action: :getAdminAll
           get '/adminIndex', action: :adminIndex
+          get '/indexprivate', action: :indexprivate
         end
       end
       resources :products, only: [:index, :show, :create, :update, :destroy] do
@@ -36,7 +38,6 @@ Rails.application.routes.draw do
         end
       end
       get '/getall', to: 'schedules#getall'
-      get '/getSchedules', to: 'schedules#getSchedules'
       get '/getCartSummary', to: 'carts#getCartSummary'
       post '/checkout', to: 'purchaseds#checkout'
       namespace :auth do

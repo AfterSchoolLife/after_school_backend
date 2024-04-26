@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_26_063140) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_26_071219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -49,6 +49,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_26_063140) do
     t.boolean "is_active", default: true
     t.text "image_url"
     t.uuid "created_by"
+    t.string "country", null: false
   end
 
   create_table "programs", force: :cascade do |t|
@@ -96,6 +97,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_26_063140) do
     t.integer "total_available"
     t.integer "currently_available"
     t.uuid "created_by"
+    t.string "country", null: false
     t.index ["program_id"], name: "index_schedules_on_program_id"
     t.index ["school_id"], name: "index_schedules_on_school_id"
   end
@@ -107,6 +109,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_26_063140) do
     t.datetime "updated_at", null: false
     t.boolean "is_active", default: true
     t.uuid "created_by"
+    t.string "country", null: false
   end
 
   create_table "students", force: :cascade do |t|

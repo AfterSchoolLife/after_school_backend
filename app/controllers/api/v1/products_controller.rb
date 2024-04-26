@@ -1,9 +1,9 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_user!, only: [:create, :adminIndex]
+    before_action :authenticate_user!
     before_action :set_product, only: [:show,:destroy,:update]
     def index
         begin
-            products = Product.where(is_active: params[:isActive])
+            products = Product.where(is_active: params[:isActive], country: current_user.country)
             render json: products, only: [:id, :title, :description, :is_active, :price, :image_url]
         rescue StandardError => e
             render json: {error: "Failed to Fetch Product" , messge: e.message}, status: :unprocessable_entity
@@ -12,10 +12,10 @@ class Api::V1::ProductsController < ApplicationController
     def adminIndex
         begin
             if current_user.role == 'super-admin'
-                products = Product.where(is_active: params[:isActive])
+                products = Product.where(is_active: params[:isActive],country: current_user.country)
                 render json: products
             elsif current_user.role == 'admin'
-                products = Product.where(created_by: current_user.id, is_active: params[:isActive])
+                products = Product.where(created_by: current_user.id, is_active: params[:isActive],country: current_user.country)
                 render json: products
             else
                 render json: { error: 'You do not have access' }, status: :unprocessable_entity
@@ -26,7 +26,7 @@ class Api::V1::ProductsController < ApplicationController
     end
     def create
         begin
-            product = Product.new(product_params.merge(created_by: current_user.id))
+            product = Product.new(product_params.merge(created_by: current_user.id,country: current_user.country))
             if product.save
                 render json: product, status: :created
             else
