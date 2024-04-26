@@ -12,7 +12,7 @@ class CheckoutsController < ApplicationController
           metadata: {
             user_id: current_user.id
           },
-          return_url: 'http://localhost:3000/shop'+ '/return?session_id={CHECKOUT_SESSION_ID}',
+          return_url: 'https://after-school-frontend.vercel.app/shop'+ '/return?session_id={CHECKOUT_SESSION_ID}',
         )
     
         render json: { clientSecret: session.client_secret, sessionId: session.id }
