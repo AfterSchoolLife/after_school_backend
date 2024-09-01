@@ -74,7 +74,15 @@ Rails.application.routes.draw do
 
   post 'stripe_webhooks', to: 'stripe_webhooks#create'
 
-
+  namespace :api do
+    namespace :v1 do
+      namespace :auth do
+        post 'password/forgot', to: 'passwords#forgot'
+        post 'password/reset', to: 'passwords#reset'
+        post 'confirmation/confirm', to: 'confirmations#confirm'
+      end
+    end
+  end
 
   # Defines the root path route ("/")
   # root "posts#index"

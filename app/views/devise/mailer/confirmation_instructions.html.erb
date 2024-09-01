@@ -1,0 +1,10 @@
+<p>Hello <%= @resource.email %>!</p>
+
+<p>Welcome to AfterSchoolLife! You can confirm your account through the link below.</p>
+
+<p><a href="<%= "http://localhost:3000/auth/confirm?confirmation_token=#{@token}" %>">Confirm my account</a></p>
+
+<p>If you didn't request this, please ignore this email.</p>
+
+
+
