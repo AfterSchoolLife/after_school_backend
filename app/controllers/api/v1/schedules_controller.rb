@@ -43,6 +43,8 @@ class Api::V1::SchedulesController < ApplicationController
   def create
     begin
       schedule = Schedule.new(schedule_params.merge(currently_available: params[:total_available],created_by: current_user.id,country: current_user.country))
+      p "schedule****************"
+      p schedule
       if schedule.save
         render json: schedule, status: :created
       else
@@ -124,6 +126,6 @@ class Api::V1::SchedulesController < ApplicationController
       end
   end
   def schedule_params
-    params.permit(:days, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id, :teacher_name, :cost_of_teacher, :facility_rental, :total_available)
+    params.permit(:schedule, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id, :teacher_name, :cost_of_teacher, :facility_rental, :total_available, days: [])
   end
 end
