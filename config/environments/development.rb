@@ -69,4 +69,23 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 4000 }
+
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.smtp_settings = {:address => "localhost", :port => 1025}
+
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp-relay.sendinblue.com",
+    port: 587,
+    # user_name: ENV["BREVO_USERNAME"],  # Your Brevo account email
+    user_name: Rails.application.credentials.smtp[:username],  # Your Brevo account email
+    # password: ENV["BREVO_PASSWORD"],   # Your Brevo SMTP key
+    password: Rails.application.credentials.smtp[:password],   # Your Brevo SMTP key
+    authentication: "login",
+    enable_starttls_auto: true,
+    domain: 'localhost' # or 'yourdomain.com' if testing on a custom domain
+  }
+  
+
 end
