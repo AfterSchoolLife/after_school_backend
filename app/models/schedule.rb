@@ -17,5 +17,6 @@ class Schedule < ApplicationRecord
   validates :total_available, presence: true
   validates :currently_available, presence: true
   validates :created_by, presence: true
-  validates :program_id, uniqueness: { scope: [:program_id, :days, :start_time, :end_time, :start_date, :end_date, :age_group, :price], message: "combination must be unique" }
+  validates :program_id, uniqueness: { scope: [:program_id, :days, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :no_class_dates], message: "combination must be unique" }
+
 end

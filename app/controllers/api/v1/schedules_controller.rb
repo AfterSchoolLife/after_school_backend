@@ -126,6 +126,6 @@ class Api::V1::SchedulesController < ApplicationController
       end
   end
   def schedule_params
-    params.permit(:schedule, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id, :teacher_name, :cost_of_teacher, :facility_rental, :total_available, days: [])
+    params.permit(:schedule, :start_time, :end_time, :start_date, :end_date, :age_group, :price, :is_active, :school_id, :program_id, :teacher_name, :cost_of_teacher, :facility_rental, :total_available, days: [], no_class_dates: [])
   end
 end
