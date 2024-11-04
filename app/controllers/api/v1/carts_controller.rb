@@ -3,40 +3,90 @@ class Api::V1::CartsController < ApplicationController
     before_action :set_cart, only: [:show,:destroy,:update]
     def index
         begin
-            carts = Cart.includes(:product, :schedule).where(user_id: current_user.id)
-            # render json: carts, include: [:product, :schedule]
-            render json: carts, include: [:product, { schedule: { include: [:program, :school] } }]
-        rescue StandardError => e
-            render json: {error: "Failed to Fetch Carts" , messge: e.message}, status: :unprocessable_entity
-        end 
-    end
-    def create
-        begin
-            @carts_create = Cart.new(cart_params_post.merge(user_id: current_user.id))
-            set_cart_type_based_on_params
-            if @carts_create.save
-                render json: @carts_create,include: [:product, { schedule: { include: [:program, :school] } }], status: :created
-            else
-                error_message = @carts_create.errors.full_messages.to_sentence
-                render json: { error: error_message }, status: :unprocessable_entity
+          carts = Cart.includes(:product, :schedule).where(user_id: current_user.id)
+      
+          carts_data = carts.as_json(include: {
+            product: {},
+            schedule: {
+              include: {
+                program: {},
+                school: {}
+              }
+            }
+          }).each do |cart_data|
+            # Modify only the program's image_url for each cart's schedule
+            program = cart_data.dig('schedule', 'program')
+            if program
+              program['image_url'] = cart_data['schedule']['program']['image'].attached? ? url_for(cart_data['schedule']['program']['image']) : program['image_url']
             end
+          end
+      
+          render json: carts_data
         rescue StandardError => e
-            render json: {error: "Failed to Create Cart" , messge: e.message}, status: :unprocessable_entity
+          render json: { error: "Failed to Fetch Carts", message: e.message }, status: :unprocessable_entity
         end
     end
 
+    def create
+        begin
+          @carts_create = Cart.new(cart_params_post.merge(user_id: current_user.id))
+          set_cart_type_based_on_params
+          if @carts_create.save
+            carts_data = @carts_create.as_json(include: {
+              product: {},
+              schedule: {
+                include: {
+                  program: {},
+                  school: {}
+                }
+              }
+            })
+      
+            # Modify only the program's image_url if an image is attached
+            program = carts_data.dig('schedule', 'program')
+            if program && @carts_create.schedule.program.image.attached?
+              program['image_url'] = url_for(@carts_create.schedule.program.image)
+            end
+      
+            render json: carts_data, status: :created
+          else
+            error_message = @carts_create.errors.full_messages.to_sentence
+            render json: { error: error_message }, status: :unprocessable_entity
+          end
+        rescue StandardError => e
+          render json: { error: "Failed to Create Cart", message: e.message }, status: :unprocessable_entity
+        end
+    end
+    
     def update
         begin
             if @cart.update(cart_params)
-                render json: @cart, include: [:product, { schedule: { include: [:program, :school] } }]
+                cart_data = @cart.as_json(include: {
+                    product: {},
+                    schedule: {
+                    include: {
+                        program: {},
+                        school: {}
+                    }
+                    }
+                })
+            
+                # Modify only the program's image_url if an image is attached
+                program = cart_data.dig('schedule', 'program')
+                if program && @cart.schedule.program.image.attached?
+                    program['image_url'] = url_for(@cart.schedule.program.image)
+                end
+            
+                render json: cart_data
             else
                 error_message = @cart.errors.full_messages.to_sentence
                 render json: { error: error_message }, status: :unprocessable_entity
             end
         rescue StandardError => e
-            render json: {error: "Failed to Update Cart" , messge: e.message}, status: :unprocessable_entity
+            render json: { error: "Failed to Update Cart", message: e.message }, status: :unprocessable_entity
         end
     end
+    
 
     def show
         render json: @cart, only: [:id, :title, :description, :is_active]

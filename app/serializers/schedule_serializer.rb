@@ -16,7 +16,11 @@ class ScheduleSerializer < ActiveModel::Serializer
     object.program.description
   end
   def program_image_url
-    object.program.image_url
+    if object.program.image.attached?
+      Rails.application.routes.url_helpers.url_for(object.program.image)
+    else
+      object.program.image_url
+    end
   end
   
 

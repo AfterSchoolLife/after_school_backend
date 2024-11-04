@@ -3,8 +3,13 @@ class Api::V1::ProgramsController < ApplicationController
     before_action :set_program, only: [:show,:destroy,:update]
     def index
         begin
+            
             programs = Program.where(is_active: true)
-            render json: programs, only: [:id, :title, :image_url, :description, :is_active]
+            render json: programs.map { |program| 
+                program.as_json(only: [:id, :title, :description, :is_active]).merge({
+                    image_url: program.image.attached? ? url_for(program.image) : nil
+                })
+            }
         rescue StandardError => e
             render json: {error: "Failed to Fetch Programs" , messge: e.message}, status: :unprocessable_entity
         end 
@@ -13,10 +18,19 @@ class Api::V1::ProgramsController < ApplicationController
         begin
             if current_user.role == 'super-admin'
                 programs = Program.where(is_active: params[:isActive])
-                render json: programs
+                render json: programs.map { |program| 
+                    program.as_json(only: [:id, :title, :description, :is_active]).merge({
+                        image_url: program.image.attached? ? url_for(program.image) : program.image_url
+                    })
+                }            
             elsif current_user.role == 'admin'
                 programs = Program.where(created_by: current_user.id, is_active: params[:isActive])
-                render json: programs
+                render json: programs.map { |program| 
+                    program.as_json(only: [:id, :title, :description, :is_active]).merge({
+                        image_url: program.image.attached? ? url_for(program.image) : program.image_url
+                    })
+                }
+            
             else
                 render json: { error: 'You do not have access' }, status: :unprocessable_entity
             end
@@ -52,8 +66,11 @@ class Api::V1::ProgramsController < ApplicationController
     end
 
     def show
-        render json: @program, only: [:id, :title, :image_url, :description, :is_active]
+        render json: @program.as_json(only: [:id, :title, :description, :is_active]).merge({
+            image_url: @program.image.attached? ? url_for(@program.image) : @program.image_url
+        })
     end
+    
 
     def destroy
         begin
@@ -74,6 +91,6 @@ class Api::V1::ProgramsController < ApplicationController
     end
 
     def program_params
-       params.permit(:title, :image_url, :description, :is_active)
+       params.permit(:title, :description, :is_active, :image)
     end
 end

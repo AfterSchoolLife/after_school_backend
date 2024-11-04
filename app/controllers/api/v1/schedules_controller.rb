@@ -81,19 +81,28 @@ class Api::V1::SchedulesController < ApplicationController
     begin
       if current_user.role == 'super-admin'
         school = School.where(is_active: true, country: current_user.country)
-        programs = Program.where(is_active: true)
+        programs = Program.where(is_active: true).map do |program|
+          program.as_json(only: [:id, :title, :description, :is_active]).merge({
+            image_url: program.image.attached? ? url_for(program.image) : program.image_url
+          })
+        end
         render json: { schools: school, programs: programs }
       elsif current_user.role == 'admin'
         school = School.where(is_active: true, created_by: current_user.id, country: current_user.country)
-        programs = Program.where(is_active: true, created_by: current_user.id)
+        programs = Program.where(is_active: true, created_by: current_user.id).map do |program|
+          program.as_json(only: [:id, :title, :description, :is_active]).merge({
+            image_url: program.image.attached? ? url_for(program.image) : program.image_url
+          })
+        end
         render json: { schools: school, programs: programs }
       else
         render json: { error: 'You do not have access' }, status: :unprocessable_entity
       end
     rescue StandardError => e
-        render json: {error: "Failed to Get Schools and programs" , messge: e.message}, status: :unprocessable_entity
+      render json: { error: "Failed to Get Schools and Programs", message: e.message }, status: :unprocessable_entity
     end
   end
+  
 
   def sendEmail
     begin
