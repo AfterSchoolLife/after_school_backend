@@ -101,7 +101,7 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def product_params
-       params.permit(:title, :description, :is_active, :price, :image_url, :image)
+       params.permit(:title, :description, :is_active, :price, :image_url, :image);
     end
 end
 
