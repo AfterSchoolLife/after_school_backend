@@ -42,5 +42,6 @@ module AfterSchoolRails
     config.api_only = true
     config.autoload_paths += Dir[Rails.root.join(Rails.root.join('config', 'routes', '**/'))]
     Rails.application.routes.default_url_options[:host] = 'http://localhost:4000'
+    # config.assets.enabled = true
   end
 end
