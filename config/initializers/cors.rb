@@ -9,7 +9,9 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # origin of the production site
     # origins 'https://after-school-frontend.vercel.app'
-    origins 'http://localhost:3000'
+    origins 'https://after-school-frontend-tio8.vercel.app'
+
+    # origins 'http://localhost:3000'
     resource(
       '*',
       headers: :any,
