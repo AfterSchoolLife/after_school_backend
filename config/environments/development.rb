@@ -84,7 +84,8 @@ Rails.application.configure do
     password: Rails.application.credentials.smtp[:password],   # Your Brevo SMTP key
     authentication: "login",
     enable_starttls_auto: true,
-    domain: 'localhost' # or 'yourdomain.com' if testing on a custom domain
+    # domain: 'localhost' # or 'yourdomain.com' if testing on a custom domain
+    domain: 'https://after-school-frontend-tio8.vercel.app'
   }
   
 
