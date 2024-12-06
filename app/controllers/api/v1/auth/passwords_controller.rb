@@ -46,7 +46,8 @@ class Api::V1::Auth::PasswordsController < ApplicationController
 
             def after_sending_reset_password_instructions_path_for(resource_name)
               # Modify the reset link to point to your React app's reset page
-              edit_password_url = "http://localhost:3000/auth/reset?reset_password_token=#{resource.reset_password_token}"
+              edit_password_url = "https://after-school-frontend-tio8.vercel.app/auth/reset?reset_password_token=#{resource.reset_password_token}"
+            #   edit_password_url = "http://localhost:3000/auth/reset?reset_password_token=#{resource.reset_password_token}"
               # Send the modified reset link in the email
             end
 
