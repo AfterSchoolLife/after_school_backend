@@ -41,7 +41,8 @@ module AfterSchoolRails
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.autoload_paths += Dir[Rails.root.join(Rails.root.join('config', 'routes', '**/'))]
-    Rails.application.routes.default_url_options[:host] = 'http://localhost:4000'
+    # Rails.application.routes.default_url_options[:host] = 'http://localhost:4000'
+    Rails.application.routes.default_url_options[:host] = 'https://after-school-frontend-tio8.vercel.app'
     # config.assets.enabled = true
   end
 end
