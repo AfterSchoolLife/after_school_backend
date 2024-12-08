@@ -89,7 +89,7 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # config.assets.compile = true
 
-  config.active_storage.default_url_options = { host: 'https://after-school-frontend-tio8.vercel.app' }
+  config.active_storage.default_url_options = { host: 'https://after-school-backend-2.onrender.com' }
 
   config.serve_static_assets = true
 

@@ -42,7 +42,7 @@ module AfterSchoolRails
     config.api_only = true
     config.autoload_paths += Dir[Rails.root.join(Rails.root.join('config', 'routes', '**/'))]
     # Rails.application.routes.default_url_options[:host] = 'http://localhost:4000'
-    Rails.application.routes.default_url_options[:host] = 'https://after-school-frontend-tio8.vercel.app'
+    Rails.application.routes.default_url_options[:host] = 'https://after-school-backend-2.onrender.com'
     # config.assets.enabled = true
   end
 end
