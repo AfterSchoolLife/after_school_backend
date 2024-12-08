@@ -88,6 +88,9 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # config.assets.compile = true
+
+  config.active_storage.default_url_options = { host: 'https://after-school-frontend-tio8.vercel.app' }
+
   config.serve_static_assets = true
 
   config.action_mailer.delivery_method = :smtp
