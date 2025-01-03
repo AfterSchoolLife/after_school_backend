@@ -1,10 +1,11 @@
-<p>Hello <%= @resource.email %>!</p>
+<p>Hello <%= @resource.parent_1_name.presence || @resource.email %>!</p>
 
-<p>Welcome to AfterSchoolLife! You can confirm your account through the link below.</p>
+<h1>Welcome to After School Life</h1>
 
-<p><a href="<%= "https://after-school-frontend-tio8.vercel.app/auth/confirm?confirmation_token=#{@token}" %>">Confirm my account</a></p>
+<h4>We are happy to onboard you on After School Life platform. Your profile has been activated and you can access it <a href="<%= "https://after-school-frontend-tio8.vercel.app/auth/confirm?confirmation_token=#{@token}" %>">here</a>.</h4>
 
-<p>If you didn't request this, please ignore this email.</p>
 
+<p>Sincerely,</p>
+<p>After School Life Team</p>
 
 

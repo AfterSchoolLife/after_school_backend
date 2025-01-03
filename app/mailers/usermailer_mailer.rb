@@ -57,10 +57,10 @@
 
 
 class UsermailerMailer < ApplicationMailer
-  def welcome_email(user)
-    @user = user
-    mail(to: @user.email, subject: 'Welcome to AfterSchoolLife!')
-  end
+  # def welcome_email(user)
+  #   @user = user
+  #   mail(to: @user.email, subject: 'Welcome to AfterSchoolLife!')
+  # end
 
   def payment_successful_email(user)
     @user = user
