@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       post '/checkout', to: 'purchaseds#checkout'
       namespace :auth do
         get '/current_user', to: 'current_user#index'
+        put '/current_user', to: 'current_user#update'
       end
     end
   end

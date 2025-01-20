@@ -32,6 +32,40 @@ class Api::V1::Auth::CurrentUserController < ApplicationController
       student: students.as_json(only: [:id, :firstname, :lastname, :age, :grade, :pickup, :address, :city, :state, :zip])
     }, status: :ok
   end
+
+  # New update method
+  def update
+    user = current_user
+
+    if user.update(user_params)
+      render json: {
+        user: UserSerializer.new(user).serializable_hash[:data][:attributes]
+      }, status: :ok
+    else
+      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  # Strong parameters for user update
+  def user_params
+    params.permit(
+      :email,
+      :parent_1_name,
+      :parent_1_phone_number,
+      :parent_1_relation,
+      :parent_2_name,
+      :parent_2_phone_number,
+      :parent_2_relation,
+      :emergency_1_name,
+      :emergency_1_phone_number,
+      :emergency_1_relation,
+      :emergency_2_name,
+      :emergency_2_phone_number,
+      :emergency_2_relation
+    )
+  end
   
   
 end
